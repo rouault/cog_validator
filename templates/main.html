@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Cloud optimized GeoTIFF validator</title>
+  </head>
+  <body>
+
+  <h1>Cloud optimized GeoTIFF validator</h1>
+
+  <p>This service enables you to check that a GeoTIFF file follows the
+  specification of <a href="https://trac.osgeo.org/gdal/wiki/CloudOptimizedGeoTIFF">
+  Cloud optimized GeoTIFF</a></p>
+
+  <p>Files should generally be specified by URLs since it will enable the service
+  to check that the hosting server can honour HTTP Range GET requests, and this
+  will speed-up the checking process itself since only IFDs will be downloaded.</p>
+
+  <p>In the case no public URL is available, the file content can be posted to
+  the service, with a 4 MB limit when the service is hosted as a AWS Lambda
+  function.</p>
+
+  <form id="fileuploadform" action="{{ root_url }}/html/validate" method="post">
+   File URL: <input onInput="urlModified()" id="url" type="string" name="url" style="width:800px;"/> <br />
+   or file upload: <input onInput="fileModified()" id="file_select" type="file" name="filename" /> <br />
+   <input id="file_b64" type="hidden" name="file_b64" />
+  </form>
+
+  <button type="submit" onClick="submitForm()">Submit</button>
+
+  <script type="text/javascript">
+
+    function urlModified() {
+        document.getElementById("file_select").value = null
+    }
+
+    function fileModified() {
+        document.getElementById("url").value = null
+    }
+
+    function submitForm(){
+        if( document.getElementById("url").value != '' )
+        {
+            document.getElementById("fileuploadform").submit();
+            return;
+        }
+
+        var f = document.getElementById("file_select").files;
+        if(f.length != 1) {
+            alert('No URL specified or no local file selected')
+            return
+        }
+
+        // Read the file locally and transcode it to base64 so we can transmit it
+        // as a URL encoded form instead of a multipart/form-data, since AWS API
+        // gateway doesn't support the later.
+        // See https://stackoverflow.com/a/41770688
+        var reader = new FileReader();
+        reader.onloadend = function (evt) {
+            b64_length = evt.target.result.length
+            if( b64_length > 6 * 1024 * 1024) {
+                alert('File is too big. Max 6 MB allowed')
+                return
+            }
+            document.getElementById("file_b64").value = evt.target.result;
+            document.getElementById("fileuploadform").submit();
+        }
+        reader.readAsDataURL(f[0])
+    }
+   </script>
+
+   <br/><br/>
+   <p>You can also use the API at {{ root_url }}/api/validate that will return the validation result as a JSon document</p> 
+   <p>To submit a file by URL: curl -s "{{ root_url }}/api/validate?url=http://path/to/my.tif"</p>
+
+  </body>
+
+</html>
