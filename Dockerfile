@@ -1,4 +1,4 @@
-# Mostly derived from https://github.com/mojodna/marblecutter/blob/master/deps/Dockerfile
+# Mostly derived from https://github.com/mojodna/marblecutter-tools/blob/master/aws/Dockerfile
 
 FROM lambci/lambda:build-python2.7
 

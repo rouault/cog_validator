@@ -118,5 +118,5 @@ A basic self test is available with the ./test.sh script
 
 The following resources have served as inspiration for AWS Lamba and API Gateway deployment
   * https://medium.com/@mojodna/slimming-down-lambda-deployment-zips-b3f6083a1dff
-  * https://github.com/mojodna/marblecutter/
+  * https://github.com/mojodna/marblecutter-tools
   * http://www.perrygeo.com/running-python-with-compiled-code-on-aws-lambda.html
