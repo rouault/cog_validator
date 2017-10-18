@@ -200,6 +200,11 @@ def html_validate():
             errors = ret['validation_errors']
     return render_template('result.html', root_url = root_url, global_result = global_result, errors = errors)
 
+@app.route('/health', methods=['GET'])
+def health():
+    return json.dumps({'status': 'OK', 'message': 'system ok'}), 200, \
+               { "Content-Type": "application/json" }
+
 # We only need this for local development.
 env = os.environ
 DEBUG = env.get('DEBUG', 'False')

@@ -1,3 +1,4 @@
+cog.log
 venv/*
 *.pyc
 cog_validator.zip
