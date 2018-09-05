@@ -57,8 +57,8 @@
         var reader = new FileReader();
         reader.onloadend = function (evt) {
             b64_length = evt.target.result.length
-            if( b64_length > 6 * 1024 * 1024) {
-                alert('File is too big. Max 6 MB allowed')
+            if( b64_length > {{ limit }} * 1024 * 1024) {
+                alert('File is too big. Max {{ limit }} MB allowed')
                 return
             }
             document.getElementById("file_b64").value = evt.target.result;

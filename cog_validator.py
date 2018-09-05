@@ -24,15 +24,16 @@
 
 import json
 import os
-from flask import Flask, request as flask_request, render_template
+from flask import Flask, request as flask_request, render_template, redirect
 from werkzeug.exceptions import RequestEntityTooLarge
 import requests
 from osgeo import gdal
 import validate_cloud_optimized_geotiff
- 
+
 app = Flask(__name__)
 # http://docs.aws.amazon.com/lambda/latest/dg/limits.html
-app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024
+COG_LIMIT = int(os.environ.get('COG_LIMIT', '6'))
+app.config['MAX_CONTENT_LENGTH'] = COG_LIMIT * 1024 * 1024
 
 tmpfilename = '/tmp/cog_validator_tmp.tif'
 
@@ -101,8 +102,8 @@ def validate(args):
         return json.dumps({'status': 'success', 'gdal_info' : info, 'details': details}), 200, { "Content-Type": "application/json" }
     else:
         return json.dumps({'status': 'failure', 'gdal_info' : info, 'details': details, 'validation_errors': errors}), 400, { "Content-Type": "application/json" }
- 
- 
+
+
 @app.route('/api/validate', methods=['GET', 'POST'])
 def api_validate():
     if flask_request.method == 'POST':
@@ -172,7 +173,7 @@ def html():
     root_url = flask_request.url_root[0:-1]
     if 'AWS_API_GATEWAY_STAGE' in flask_request.environ:
         root_url += '/' + flask_request.environ['AWS_API_GATEWAY_STAGE']
-    return render_template('main.html', root_url = root_url)
+    return render_template('main.html', root_url = root_url, limit=COG_LIMIT)
 
 @app.route('/html/validate', methods=['POST'])
 def html_validate():
@@ -200,9 +201,15 @@ def html_validate():
             errors = ret['validation_errors']
     return render_template('result.html', root_url = root_url, global_result = global_result, errors = errors)
 
+@app.route('/', methods=['GET'])
+def root():
+    return redirect('/html')
+
+
 # We only need this for local development.
 env = os.environ
 DEBUG = env.get('DEBUG', 'False')
+LISTEN = env.get('LISTEN', '127.0.0.1')
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG=="True")
+    app.run(debug=DEBUG=="True", host=LISTEN)
