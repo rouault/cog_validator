@@ -1,4 +1,4 @@
-# Cloud Optimized GeoTIFF validatator
+# Cloud Optimized GeoTIFF validator
 
 This is a standalone (Python / Flask) service that allows users to submit
 GeoTIFF files (preferably by URL) and check their compliance with the
@@ -27,7 +27,7 @@ POST request, with a form encoded with application/x-www-form-urlencoded
 
 This later interface is mostly needed to overcome a current limitation of the AWS API Gateway interface that does not accept multipart/form-data
 
-For all the above interfaces, the query will return a JSon document with the following keys :
+For all the above interfaces, the query will return a JSON document with the following keys:
   * status (required): 'success' or 'failure'
   * error (optional): error message. present when the request is invalid, or the file cannot be read
   * validation_errors (optional): array of errors. Only present if the file is a GeoTIFF file but does not comply with the COG requirements
@@ -65,7 +65,7 @@ Assuming you have a AWS account with initial setup, follow the following steps t
   * In "Select Blueprint" step, select "Author from scratch"
   * Skip Add Trigger with "Next"
   * Give a name to the function, for example "cog_validator"
-  * Select "Python 2.7"  as Runtime
+  * Select "Python 2.7" as Runtime
   * Select "Upload a .ZIP file" as "Code entry type"
   * In "Function package", click on Upload an select the generated cog_validator.zip
   * Enter "lambda_main.handle" in "Handler"
@@ -99,7 +99,7 @@ Assuming you have a AWS account with initial setup, follow the following steps t
     * In Path entry, enter "/api/validate"
     * In "Query strings" entry, enter "url=http://svn.osgeo.org/gdal/trunk/autotest/gcore/data/byte.tif"
     * In "Headers" entry, enter "Host: foo"
-    * Click on Test. A JSon document should be displayed (with validation errors)
+    * Click on Test. A JSON document should be displayed (with validation errors)
   * In Resources tab, in Actions dropdown list, select "Deploy API"
   * In Deployment stage, select "New stage"
   * Enter "prod" as stage name
