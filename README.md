@@ -39,6 +39,16 @@ For all the above interfaces, the query will return a JSON document with the fol
 The service expose a basic HTML page for users to submit their GeoTIFF files
 and display the result of the validation
 
+## Local
+
+```
+$ docker build -t cog_validator .
+$ docker run --rm -p 5000:5000 cog_validator
+```
+Then access at http://localhost:5000/
+
+The upload image size limit defaults to 50MB; you can increase it via `-e COG_LIMIT={MB}`
+
 ## AWS Lambda / API Gateway
 
 The service can be deployed as a AWS Lamba function, accessible through the AWS API Gateway.
